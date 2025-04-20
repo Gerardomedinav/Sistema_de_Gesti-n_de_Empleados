@@ -18,17 +18,17 @@ El **Sistema de Gestión de Empleados** es una aplicación web desarrollada con 
 ## 📸 Vista previa del sistema
 
 ### 📋 Lista de empleados paginada
-![Lista de empleados](./public/public/storage/uploads/captura1.png)
+![Lista de empleados](public/img/captura1.png)
 
 ---
 
 ### ➕ Formulario para crear empleados
-![Formulario de registro](./public/public/storage/uploads/captura2.png)
+![Formulario de registro](public/img/captura2.png)
 
 ---
 
 ### 🛠️ Edición de empleados existentes
-![Editar empleado](./public/public/storage/uploads/captura3.png)
+![Editar empleado](public/img/captura1.png)
 
 ---
 
