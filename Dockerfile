@@ -4,8 +4,11 @@ FROM php:8.3-apache
 # Directorio de trabajo
 WORKDIR /var/www/html
 
+# Actualizar paquetes del sistema
+RUN apt-get update
+
 # Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y \
     git \
     curl \
     libpng-dev \
@@ -41,13 +44,16 @@ RUN composer install --no-dev --optimize-autoloader
 # Instalar dependencias JS (opcional)
 RUN npm install --production
 
-# Limpiar caché existente
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear && \
-    php artisan cache:clear
+# Generar APP_KEY si no está definida
+RUN php artisan key:generate --force || echo "APP_KEY ya definida o no necesaria"
+
+# Limpiar caché paso a paso
+RUN php artisan config:clear || echo "Falló config:clear"
+RUN php artisan route:clear || echo "Falló route:clear"
+RUN php artisan view:clear || echo "Falló view:clear"
+RUN php artisan cache:clear || echo "Falló cache:clear"
 
 # Cachear configuración para producción
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+RUN php artisan config:cache || echo "Falló config:cache"
+RUN php artisan route:cache || echo "Falló route:cache"
+RUN php artisan view:cache || echo "Falló view:cache"
