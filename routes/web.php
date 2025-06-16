@@ -28,3 +28,13 @@ Route::get('/home', [EmpleadoController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/',[EmpleadoController::class, 'index'])->name('home');
 });
+use Illuminate\Support\Facades\DB;
+
+Route::get('/test', function () {
+    try {
+        DB::connection()->getPdo();
+        return 'Conexión a BD OK';
+    } catch (\Exception $e) {
+        return 'No hay conexión a la BD: ' . $e->getMessage();
+    }
+});

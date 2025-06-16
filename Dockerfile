@@ -1,6 +1,9 @@
 # Usa una imagen oficial de PHP con Apache
 FROM php:8.3-apache
 
+# Ensure all packages are up-to-date to reduce vulnerabilities
+RUN apt-get update && apt-get upgrade -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Directorio de trabajo
 WORKDIR /var/www/html
 
