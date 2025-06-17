@@ -1,10 +1,8 @@
 services:
   - type: web
     name: sistema-de-gestion
-    env: php
+    env: docker
     repo: Gerardomedinav/Sistema_de_Gesti-n_de_Empleados
-    buildCommand: "php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan cache:clear && composer install && npm install && npm run production"
-    startCommand: "php -S 0.0.0.0:$PORT -t public"
     envVars:
       - key: APP_ENV
         value: production
@@ -34,5 +32,3 @@ services:
         value: log
       - key: LOG_LEVEL
         value: debug
-      - key: POSTINSTALL_SCRIPT
-        value: "php artisan migrate --force"
