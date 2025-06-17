@@ -3,7 +3,7 @@ services:
     name: sistema-de-gestion
     env: php
     repo: Gerardomedinav/Sistema_de_Gesti-n_de_Empleados
-    buildCommand: "composer install && npm install && npm run production"
+    buildCommand: "php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan cache:clear && composer install && npm install && npm run production"
     startCommand: "php -S 0.0.0.0:$PORT -t public"
     envVars:
       - key: APP_ENV
@@ -34,3 +34,5 @@ services:
         value: log
       - key: LOG_LEVEL
         value: debug
+      - key: POSTINSTALL_SCRIPT
+        value: "php artisan migrate --force"
