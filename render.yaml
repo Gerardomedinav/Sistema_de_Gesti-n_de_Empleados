@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: sistema-de-gestion
+    env: php
+    repo: Gerardomedinav/Sistema_de_Gesti-n_de_Empleados
+    buildCommand: "composer install && npm install && npm run production"
+    startCommand: "php -S 0.0.0.0:$PORT -t public"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        value: base64:iJ6JF6sPbGqpDTt75dDh4xpyfbiAjS/eJQl/VOgdN+0=
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        value: dpg-d18cgk2dbo4c739jm12g-a.oregon-postgres.render.com
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_DATABASE
+        value: sistema_empleados_db
+      - key: DB_USERNAME
+        value: sistema_empleados_db_user
+      - key: DB_PASSWORD
+        value: FkTtPGszsME4tWEcLrpJzQDII93KGR9d
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: MAIL_MAILER
+        value: log
+      - key: LOG_LEVEL
+        value: debug
