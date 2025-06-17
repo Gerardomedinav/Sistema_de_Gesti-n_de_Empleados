@@ -32,3 +32,5 @@ services:
         value: log
       - key: LOG_LEVEL
         value: debug
+      - key: APP_DEBUG
+        value: true
