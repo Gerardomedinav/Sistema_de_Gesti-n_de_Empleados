@@ -54,3 +54,19 @@ RUN php artisan view:cache || true
 
 # Ejecutar migraciones y arrancar Apache
 CMD php artisan migrate --force && apache2-foreground
+# Crear usuario por defecto directamente con PHP
+RUN echo "<?php \
+require 'vendor/autoload.php'; \
+$app = require 'bootstrap/app.php'; \
+$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); \
+use Illuminate\Support\Facades\Hash; \
+use Illuminate\Support\Facades\DB; \
+DB::table('users')->insert([ \
+  'name' => 'Admin', \
+  'email' => 'admin@example.com', \
+  'password' => Hash::make('password'), \
+  'created_at' => now(), \
+  'updated_at' => now() \
+]);" > crear_usuario.php \
+&& php crear_usuario.php && rm crear_usuario.php
+
