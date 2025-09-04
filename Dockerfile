@@ -1,5 +1,8 @@
 # Usa una imagen oficial de PHP con Apache
-FROM php:8.3-apache
+FROM php:8.3-apache-bullseye
+
+# Actualiza los paquetes del sistema para reducir vulnerabilidades
+RUN apt-get update && apt-get upgrade -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Directorio de trabajo
 WORKDIR /var/www/html
