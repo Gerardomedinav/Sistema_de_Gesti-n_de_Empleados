@@ -54,12 +54,10 @@ RUN php artisan cache:clear || true
 RUN php artisan config:cache || true
 RUN php artisan route:cache || true
 RUN php artisan view:cache || true
-
-# Cambiar el comando para usar el puerto proporcionado por Railway
-CMD php artisan migrate --force && php -S 0.0.0.0:$PORT -t public
+# Ejecutar migraciones de base de datos en producción
+RUN php artisan migrate --force && php -S 0.0.0.0:$PORT -t public
 # Crear usuario por defecto directamente con PHP
 # Crear archivo para insertar usuario por defecto
 COPY crear_usuario.php /var/www/html/crear_usuario.php
 RUN php crear_usuario.php && rm crear_usuario.php
 
-# Exponer el puerto 80
