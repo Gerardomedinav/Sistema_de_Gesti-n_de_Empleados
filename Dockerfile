@@ -1,7 +1,6 @@
-# Usamos una imagen oficial de PHP con Apache (más estable que artisan serve en Railway)
 FROM php:8.2-apache
 
-# Instalamos dependencias del sistema
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,38 +11,46 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nodejs \
     npm \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalamos Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Instalar Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Cambiamos el DocumentRoot de Apache a /var/www/html/public
+# Configurar Apache para servir desde /public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copiamos todo el proyecto
+# Habilitar mod_rewrite (¡importante para Laravel!)
+RUN a2enmod rewrite
+
+# Copiar proyecto
 COPY . /var/www/html/
 
-# Instalamos dependencias de PHP y Node
+# Entrar al directorio
 WORKDIR /var/www/html
+
+# Instalar dependencias PHP
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
-RUN npm ci && npm run build
 
-# Generamos la clave de Laravel (si no existe)
-RUN php artisan key:generate
+# Instalar y compilar assets (si existen)
+RUN npm ci && npm run build --if-present
 
-# Cacheamos configuraciones
+# Generar APP_KEY si no está definida (fallback, pero mejor definirla en Railway)
+RUN if [ -z "$APP_KEY" ]; then php artisan key:generate; fi
+
+# Cache (solo en producción)
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
 
-# Permitimos que Apache escriba logs y storage
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Dar permisos de escritura a storage y cache (sin chown, con chmod es suficiente en Railway)
+RUN chmod -R 775 storage bootstrap/cache
+RUN chmod -R 775 public # por si usas file uploads o assets generados
 
-# Exponemos el puerto 80
+# Puerto
 EXPOSE 80
 
-# Iniciamos Apache en primer plano
+# Iniciar Apache en primer plano
 CMD ["apache2-foreground"]
