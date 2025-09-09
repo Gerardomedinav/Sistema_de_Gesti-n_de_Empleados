@@ -17,12 +17,10 @@ RUN apt-get update && apt-get install -y \
 # Instalar Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Configurar Apache para servir desde /public
+# ✅ Configurar Apache para servir desde /public (¡la forma correcta para Railway!)
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Habilitar mod_rewrite
+# ✅ Habilitar mod_rewrite (¡imprescindible para Laravel!)
 RUN a2enmod rewrite
 
 # Copiar proyecto
@@ -39,15 +37,15 @@ RUN npm ci && npm run build --if-present
 
 # Cache (solo en producción)
 RUN php artisan config:cache
-# RUN php artisan route:cache   ← ¡COMENTADO TEMPORALMENTE!
+# RUN php artisan route:cache   ← ¡COMENTADO por el conflicto de 'home'!
 RUN php artisan view:cache
 
-# Dar permisos de escritura
-RUN chmod -R 775 storage bootstrap/cache
-RUN chmod -R 775 public
+# ✅ Dar permisos (777 para logs, 755 para public)
+RUN chmod -R 777 storage bootstrap/cache
+RUN chmod -R 755 public
 
 # Puerto
 EXPOSE 80
 
-# Iniciar Apache
+# ✅ Iniciar Apache (Railway se encarga del puerto $PORT automáticamente)
 CMD ["apache2-foreground"]
