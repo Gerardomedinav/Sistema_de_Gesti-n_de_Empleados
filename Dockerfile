@@ -40,12 +40,15 @@ RUN php artisan config:cache
 # RUN php artisan route:cache   ← ¡COMENTADO por el conflicto de 'home'!
 RUN php artisan view:cache
 
-# ✅ Dar permisos (777 para logs, 755 para public)
+# ✅ Dar permisos de escritura a storage y cache
 RUN chmod -R 777 storage bootstrap/cache
-RUN chmod -R 755 public
+
+# ✅ ✅ ✅ CORRECCIÓN CLAVE: Permisos correctos para public/ (evita 403 Forbidden)
+RUN find public -type f -exec chmod 644 {} \;
+RUN find public -type d -exec chmod 755 {} \;
 
 # Puerto
 EXPOSE 80
 
-# ✅ Iniciar Apache (Railway se encarga del puerto $PORT automáticamente)
+# ✅ Iniciar Apache (Railway enruta el tráfico al puerto 80 automáticamente)
 CMD ["apache2-foreground"]
