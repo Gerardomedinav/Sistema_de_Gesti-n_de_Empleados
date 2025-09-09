@@ -39,7 +39,7 @@ RUN npm ci && npm run build --if-present
 
 # Cache (solo en producción)
 RUN php artisan config:cache
-RUN php artisan route:cache
+# RUN php artisan route:cache   ← ¡COMENTADO TEMPORALMENTE!
 RUN php artisan view:cache
 
 # Dar permisos de escritura
