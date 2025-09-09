@@ -22,7 +22,7 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Habilitar mod_rewrite (¡importante para Laravel!)
+# Habilitar mod_rewrite
 RUN a2enmod rewrite
 
 # Copiar proyecto
@@ -34,23 +34,20 @@ WORKDIR /var/www/html
 # Instalar dependencias PHP
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 
-# Instalar y compilar assets (si existen)
+# Instalar y compilar assets
 RUN npm ci && npm run build --if-present
-
-# Generar APP_KEY si no está definida (fallback, pero mejor definirla en Railway)
-RUN if [ -z "$APP_KEY" ]; then php artisan key:generate; fi
 
 # Cache (solo en producción)
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
 
-# Dar permisos de escritura a storage y cache (sin chown, con chmod es suficiente en Railway)
+# Dar permisos de escritura
 RUN chmod -R 775 storage bootstrap/cache
-RUN chmod -R 775 public # por si usas file uploads o assets generados
+RUN chmod -R 775 public
 
 # Puerto
 EXPOSE 80
 
-# Iniciar Apache en primer plano
+# Iniciar Apache
 CMD ["apache2-foreground"]
