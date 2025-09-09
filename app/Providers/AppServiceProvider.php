@@ -22,5 +22,6 @@ class AppServiceProvider extends ServiceProvider
         //
         // Paginación con Bootstrap
         Paginator::useBootstrap();
+        \Illuminate\Support\Facades\Log::info('AppServiceProvider::boot() llamado');
     }
 }

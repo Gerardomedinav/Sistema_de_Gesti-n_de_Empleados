@@ -28,3 +28,7 @@ Route::get('/home', [EmpleadoController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/',[EmpleadoController::class, 'index'])->name('home');
 });
+Route::get('/test', function () {
+    \Illuminate\Support\Facades\Log::info('Test route called');
+    return 'OK';
+});
