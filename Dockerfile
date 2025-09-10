@@ -17,13 +17,16 @@ RUN apt-get update && apt-get install -y \
 # Instalar Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# ✅ Configurar Apache para servir desde /public (¡la forma correcta para Railway!)
+# Configurar Apache para servir desde /var/www/html/public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
-# ✅ Habilitar mod_rewrite (¡imprescindible para Laravel!)
+# Habilitar mod_rewrite (imprescindible para Laravel)
 RUN a2enmod rewrite
 
-# Copiar proyecto
+# Crear directorio de trabajo
+RUN mkdir -p /var/www/html
+
+# Copiar proyecto con permisos correctos
 COPY . /var/www/html/
 
 # Entrar al directorio
@@ -33,22 +36,23 @@ WORKDIR /var/www/html
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 
 # Instalar y compilar assets
-RUN npm ci && npm run build --if-present
+RUN npm ci && npm run build
 
 # Cache (solo en producción)
 RUN php artisan config:cache
-# RUN php artisan route:cache   ← ¡COMENTADO por el conflicto de 'home'!
+RUN php artisan route:cache
 RUN php artisan view:cache
 
-# ✅ Dar permisos de escritura a storage y cache
-RUN chmod -R 777 storage bootstrap/cache
+# Dar permisos de escritura a storage y cache
+RUN chmod -R 775 storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# ✅ ✅ ✅ CORRECCIÓN CLAVE: Permisos correctos para public/ (evita 403 Forbidden)
+# Asegurar permisos correctos para public/
 RUN find public -type f -exec chmod 644 {} \;
 RUN find public -type d -exec chmod 755 {} \;
 
 # Puerto
 EXPOSE 80
 
-# ✅ Iniciar Apache (Railway enruta el tráfico al puerto 80 automáticamente)
+# Iniciar Apache
 CMD ["apache2-foreground"]
