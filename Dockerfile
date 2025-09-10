@@ -42,9 +42,9 @@ RUN npm run build
 RUN echo "=== Archivos generados ===" && ls -la public/css/ public/js/
 
 # Cache (solo en producción)
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+#RUN php artisan config:cache
+#RUN php artisan route:cache
+#RUN php artisan view:cache
 
 # Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
