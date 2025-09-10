@@ -19,6 +19,7 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Configurar Apache para servir desde /var/www/html/public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+ENV APACHE_SERVER_NAME=localhost
 
 # Habilitar mod_rewrite (imprescindible para Laravel)
 RUN a2enmod rewrite
@@ -26,29 +27,35 @@ RUN a2enmod rewrite
 # Copiar proyecto
 COPY . /var/www/html/
 
+# Verificar estructura
+RUN echo "=== Estructura de /var/www/html/public ===" && ls -la /var/www/html/public/
+
+# Configurar Apache explícitamente
+RUN echo "DocumentRoot /var/www/html/public" > /etc/apache2/sites-available/000-default.conf && \
+    echo "<Directory /var/www/html/public>" >> /etc/apache2/sites-available/000-default.conf && \
+    echo "    Options Indexes FollowSymLinks" >> /etc/apache2/sites-available/000-default.conf && \
+    echo "    AllowOverride All" >> /etc/apache2/sites-available/000-default.conf && \
+    echo "    Require all granted" >> /etc/apache2/sites-available/000-default.conf && \
+    echo "</Directory>" >> /etc/apache2/sites-available/000-default.conf
+
 # Entrar al directorio
 WORKDIR /var/www/html
 
 # Instalar dependencias PHP
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 
-# Instalar dependencias Node.js
-RUN npm ci
+# Instalar y compilar assets
+RUN npm ci && npm run build
 
-# Verificar que las dependencias están instaladas
-RUN ls -la node_modules/
-
-# Compilar assets para producción
-RUN npm run build
-
-# Verificar qué archivos se generaron
-RUN echo "=== Archivos en public/css ===" && ls -la public/css/ && \
-    echo "=== Archivos en public/js ===" && ls -la public/js/
+# Configurar Laravel para mostrar errores
+RUN php artisan config:clear
+RUN php artisan route:clear
+RUN php artisan view:clear
 
 # Cache (solo en producción)
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+#RUN php artisan config:cache
+#RUN php artisan route:cache
+#RUN php artisan view:cache
 
 # Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
