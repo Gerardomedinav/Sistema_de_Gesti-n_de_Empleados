@@ -23,11 +23,8 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 # Habilitar mod_rewrite (imprescindible para Laravel)
 RUN a2enmod rewrite
 
-# Copiar todo el proyecto
+# Copiar proyecto
 COPY . /var/www/html/
-
-# Verificar que el archivo existe
-RUN ls -la /var/www/html/public/
 
 # Entrar al directorio
 WORKDIR /var/www/html
@@ -38,12 +35,12 @@ RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 # Instalar y compilar assets
 RUN npm ci && npm run build
 
-# Cache (solo en producción)
+# Cache (solo en producción) - COMENTAMOS EL ROUTE CACHE POR AHORA
 RUN php artisan config:cache
-RUN php artisan route:cache
+# RUN php artisan route:cache   ← Comentado temporalmente por rutas duplicadas
 RUN php artisan view:cache
 
-# Dar permisos correctos
+# Dar permisos de escritura a storage y cache
 RUN chmod -R 775 storage bootstrap/cache
 RUN chown -R www-data:www-data storage bootstrap/cache
 
