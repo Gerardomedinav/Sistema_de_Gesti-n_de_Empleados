@@ -44,8 +44,11 @@ WORKDIR /var/www/html
 # Instalar dependencias PHP
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 
-# Instalar y compilar assets
-RUN npm ci && npm run build
+# Instalar dependencias Node.js
+RUN npm ci
+
+# Compilar assets
+RUN npm run build
 
 # Verificar que los archivos se generaron correctamente
 RUN echo "=== Archivos generados en build ===" && ls -la public/build/assets/ 2>/dev/null || echo "No se encontraron archivos en build/assets"
