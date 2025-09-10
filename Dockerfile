@@ -19,19 +19,25 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Configurar Apache para servir desde /var/www/html/public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+ENV APACHE_SERVER_NAME=localhost
 
 # Habilitar mod_rewrite (imprescindible para Laravel)
 RUN a2enmod rewrite
 
-# Crear directorio y copiar proyecto
-RUN mkdir -p /var/www/html
+# Copiar proyecto
 COPY . /var/www/html/
 
-# Verificar que los archivos existen
-RUN echo "=== Verificando archivos ===" && \
-    ls -la /var/www/html/public/ && \
-    echo "=== Verificando contenido de index.php ===" && \
-    cat /var/www/html/public/index.php | wc -l
+# Verificar estructura
+RUN echo "=== Estructura de /var/www/html ===" && ls -la /var/www/html/ && \
+    echo "=== Estructura de /var/www/html/public ===" && ls -la /var/www/html/public/
+
+# Configurar Apache directamente
+RUN echo "DocumentRoot /var/www/html/public" > /etc/apache2/sites-available/000-default.conf && \
+    echo "<Directory /var/www/html/public>" >> /etc/apache2/sites-available/000-default.conf && \
+    echo "    Options Indexes FollowSymLinks" >> /etc/apache2/sites-available/000-default.conf && \
+    echo "    AllowOverride All" >> /etc/apache2/sites-available/000-default.conf && \
+    echo "    Require all granted" >> /etc/apache2/sites-available/000-default.conf && \
+    echo "</Directory>" >> /etc/apache2/sites-available/000-default.conf
 
 # Entrar al directorio
 WORKDIR /var/www/html
@@ -47,7 +53,7 @@ RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
 
-# Dar permisos correctos
+# Dar permisos de escritura a storage y cache
 RUN chmod -R 775 storage bootstrap/cache
 RUN chown -R www-data:www-data storage bootstrap/cache
 
