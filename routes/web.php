@@ -9,12 +9,7 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return view('auth.login');
 });
-/* Route::get('/empleado', function () {
-    return view('empleado.index');
-    });
 
-Route::get('/empleado/create', [EmpleadoController::class,'create']);
-*/
 Route::resource('empleado', EmpleadoController::class)->middleware('auth');
 
 Auth::routes([
@@ -22,12 +17,11 @@ Auth::routes([
     'reset' => false,
 ]);
 
-
-Route::get('/home', [EmpleadoController::class, 'index'])->name('home');
-
+// Ruta principal para la página de inicio después de login
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('/',[EmpleadoController::class, 'index'])->name('home');
+    Route::get('/', [EmpleadoController::class, 'index'])->name('home');
 });
+
 Route::get('/test', function () {
     \Illuminate\Support\Facades\Log::info('Test route called');
     return 'OK';
