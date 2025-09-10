@@ -35,16 +35,20 @@ RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 # Instalar dependencias Node.js
 RUN npm ci
 
-# Compilar assets
+# Verificar que las dependencias están instaladas
+RUN ls -la node_modules/
+
+# Compilar assets para producción
 RUN npm run build
 
-# Verificar archivos generados
-RUN echo "=== Archivos generados ===" && ls -la public/css/ public/js/
+# Verificar qué archivos se generaron
+RUN echo "=== Archivos en public/css ===" && ls -la public/css/ && \
+    echo "=== Archivos en public/js ===" && ls -la public/js/
 
 # Cache (solo en producción)
-#RUN php artisan config:cache
-#RUN php artisan route:cache
-#RUN php artisan view:cache
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
 
 # Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
