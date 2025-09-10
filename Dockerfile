@@ -47,6 +47,16 @@ RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 # Instalar y compilar assets
 RUN npm ci && npm run build
 
+# Verificar que los archivos se generaron correctamente
+RUN echo "=== Archivos generados en build ===" && ls -la public/build/assets/ 2>/dev/null || echo "No se encontraron archivos en build/assets"
+
+# Si no se generaron archivos en build, crear archivo CSS estático como fallback
+RUN if [ ! -f public/build/assets/app-*.css ] && [ ! -f public/css/app.css ]; then \
+        echo "Creando CSS estático como fallback..." && \
+        mkdir -p public/css && \
+        echo "/* Estilos básicos para Laravel */ body { font-family: 'Nunito', sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; } .navbar { background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; } .navbar-brand { font-weight: bold; color: #3097D1 !important; } .nav-link { color: #333; } .nav-link:hover { color: #3097D1; } .container { max-width: 1200px; margin: 0 auto; } .card { background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; } .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; } .btn-primary { background-color: #3097D1; color: white; } .btn-primary:hover { background-color: #2579a9; } .form-control { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px; } .form-group { margin-bottom: 15px; } h1 { color: #333; text-align: center; }" > public/css/app.css; \
+    fi
+
 # Configurar Laravel para mostrar errores
 RUN php artisan config:clear
 RUN php artisan route:clear
