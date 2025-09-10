@@ -28,10 +28,9 @@ RUN a2enmod rewrite
 COPY . /var/www/html/
 
 # Verificar estructura
-RUN echo "=== Estructura de /var/www/html ===" && ls -la /var/www/html/ && \
-    echo "=== Estructura de /var/www/html/public ===" && ls -la /var/www/html/public/
+RUN echo "=== Estructura de /var/www/html/public ===" && ls -la /var/www/html/public/
 
-# Configurar Apache directamente
+# Configurar Apache explícitamente
 RUN echo "DocumentRoot /var/www/html/public" > /etc/apache2/sites-available/000-default.conf && \
     echo "<Directory /var/www/html/public>" >> /etc/apache2/sites-available/000-default.conf && \
     echo "    Options Indexes FollowSymLinks" >> /etc/apache2/sites-available/000-default.conf && \
@@ -48,12 +47,17 @@ RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 # Instalar y compilar assets
 RUN npm ci && npm run build
 
-# Cache (solo en producción)
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+# Configurar Laravel para mostrar errores
+RUN php artisan config:clear
+RUN php artisan route:clear
+RUN php artisan view:clear
 
-# Dar permisos de escritura a storage y cache
+# Cache (solo en producción)
+#RUN php artisan config:cache
+#RUN php artisan route:cache
+#RUN php artisan view:cache
+
+# Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
 RUN chown -R www-data:www-data storage bootstrap/cache
 
