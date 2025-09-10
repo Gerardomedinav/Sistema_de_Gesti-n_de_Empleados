@@ -23,11 +23,11 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 # Habilitar mod_rewrite (imprescindible para Laravel)
 RUN a2enmod rewrite
 
-# Crear directorio de trabajo
-RUN mkdir -p /var/www/html
-
-# Copiar proyecto con permisos correctos
+# Copiar todo el proyecto
 COPY . /var/www/html/
+
+# Verificar que el archivo existe
+RUN ls -la /var/www/html/public/
 
 # Entrar al directorio
 WORKDIR /var/www/html
@@ -43,7 +43,7 @@ RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
 
-# Dar permisos de escritura a storage y cache
+# Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
 RUN chown -R www-data:www-data storage bootstrap/cache
 
