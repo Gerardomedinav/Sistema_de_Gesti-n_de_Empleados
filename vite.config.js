@@ -15,5 +15,5 @@ export default defineConfig({
             input: 'resources/js/app.js',
         },
     },
-    base: '/build/', // 👈 Esto es lo que faltaba
+    base: '/build/',
 });
