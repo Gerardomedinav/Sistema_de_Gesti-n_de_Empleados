@@ -5,15 +5,15 @@ use App\Http\Controllers\EmpleadoController;
 use App\Models\Empleado;
 use Illuminate\Support\Facades\Auth;
 
-
 Route::get('/', function () {
     return view('auth.login');
 });
 
 Route::resource('empleado', EmpleadoController::class)->middleware('auth');
 
+// ✅ ¡ACTIVA EL REGISTRO!
 Auth::routes([
-    'register' => false,
+    'register' => true,   // ← Esto es lo único que cambias
     'reset' => false,
 ]);
 
