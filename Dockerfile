@@ -53,6 +53,9 @@ RUN npm run build
 # Verificar que los archivos se generaron correctamente
 RUN echo "=== Archivos generados en build ===" && ls -la public/build/assets/ 2>/dev/null || echo "No se encontraron archivos en build/assets"
 
+RUN ls -la public/build
+RUN ls -la public/build/assets
+
 # Si no se generaron archivos en build, crear archivo CSS estático como fallback
 RUN if [ ! -f public/build/assets/app-*.css ] && [ ! -f public/css/app.css ]; then \
         echo "Creando CSS estático como fallback..." && \
@@ -66,9 +69,9 @@ RUN php artisan route:clear
 RUN php artisan view:clear
 
 # Cache (solo en producción)
-#RUN php artisan config:cache
-#RUN php artisan route:cache
-#RUN php artisan view:cache
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
 
 # Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
