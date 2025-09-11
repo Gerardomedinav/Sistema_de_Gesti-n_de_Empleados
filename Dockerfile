@@ -71,10 +71,6 @@ RUN php artisan view:clear
 #RUN php artisan config:cache
 #RUN php artisan route:cache
 #RUN php artisan view:cache
-RUN php artisan config:clear && \
-    php artisan view:clear && \
-    php artisan route:clear && \
-    php artisan optimize:clear
 
 # Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
