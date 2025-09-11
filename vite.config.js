@@ -14,6 +14,6 @@ export default defineConfig({
         rollupOptions: {
             input: 'resources/js/app.js',
         },
-    },
-    base: '/',
+    }
+    
 });
