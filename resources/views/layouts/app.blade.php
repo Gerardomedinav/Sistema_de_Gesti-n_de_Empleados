@@ -14,12 +14,8 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    @else
-        <link href="{{ asset('build/assets/app-wO4EqYCH.css ') }}" rel="stylesheet"> 
-    @endif   
-</head>
+          @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+  </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
