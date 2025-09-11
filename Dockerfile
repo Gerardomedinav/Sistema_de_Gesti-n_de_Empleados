@@ -1,5 +1,4 @@
 FROM php:8.2-apache
-
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
@@ -68,10 +67,10 @@ RUN php artisan config:clear
 RUN php artisan route:clear
 RUN php artisan view:clear
 
-# Cache (solo en producción)
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+# Cache (solo en producción) esto esta causando error 500
+#RUN php artisan config:cache
+#RUN php artisan route:cache
+#RUN php artisan view:cache
 
 # Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
