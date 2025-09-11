@@ -13,9 +13,8 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    <!-- Styles --> 
-       <link rel="stylesheet" href="{{ Vite::asset('resources/sass/app.scss') }}">
-       <script src="{{ Vite::asset('resources/js/app.js') }}"></script>
+  <script type="module" src="/build/assets/app-De4R3s3M.js"></script>
+  <link rel="stylesheet" href="/build/assets/app-wO4EqYCH.css">
 
   </head>
 <body>
