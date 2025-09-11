@@ -13,8 +13,12 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-
+    <!-- Styles -->
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @else
+        <link href="{{ asset('build/assets/app.css') }}" rel="stylesheet">
+    @endif   
 </head>
 <body>
     <div id="app">
