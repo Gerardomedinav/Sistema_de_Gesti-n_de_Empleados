@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\URL;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -19,9 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
-        // Paginación con Bootstrap
-        Paginator::useBootstrap();
-        \Illuminate\Support\Facades\Log::info('AppServiceProvider::boot() llamado');
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
     }
 }
