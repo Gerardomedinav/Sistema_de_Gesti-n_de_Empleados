@@ -70,7 +70,7 @@ RUN php artisan view:clear
 # Cache (solo en producción) esto esta causando error 500
 #RUN php artisan config:cache
 #RUN php artisan route:cache
-#RUN php artisan view:cache
+RUN php artisan view:cache
 
 # Dar permisos correctos
 RUN chmod -R 775 storage bootstrap/cache
