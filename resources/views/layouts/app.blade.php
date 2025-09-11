@@ -17,7 +17,7 @@
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @else
-        <link href="{{ asset('build/assets/app.css') }}" rel="stylesheet">
+        <link href="{{ asset('build/assets/app-wO4EqYCH.css ') }}" rel="stylesheet"> 
     @endif   
 </head>
 <body>
