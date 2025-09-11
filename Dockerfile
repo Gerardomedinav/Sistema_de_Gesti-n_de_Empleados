@@ -1,4 +1,5 @@
 FROM php:8.2-apache
+
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
@@ -51,9 +52,8 @@ RUN npm run build
 
 # Verificar que los archivos se generaron correctamente
 RUN echo "=== Archivos generados en build ===" && ls -la public/build/assets/ 2>/dev/null || echo "No se encontraron archivos en build/assets"
-
-RUN ls -la public/build
-RUN ls -la public/build/assets
+RUN ls -la public/build || true
+RUN ls -la public/build/assets || true
 
 # Si no se generaron archivos en build, crear archivo CSS estático como fallback
 RUN if [ ! -f public/build/assets/app-*.css ] && [ ! -f public/css/app.css ]; then \
@@ -67,14 +67,12 @@ RUN php artisan config:clear
 RUN php artisan route:clear
 RUN php artisan view:clear
 
-# Cache (solo en producción) esto esta causando error 500
-#RUN php artisan config:cache
-#RUN php artisan route:cache
-#RUN php artisan view:cache
+# Crear symlink para imágenes de empleados
+RUN php artisan storage:link || true
 
 # Dar permisos correctos
-RUN chmod -R 775 storage bootstrap/cache
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache public/storage
+RUN chown -R www-data:www-data storage bootstrap/cache public/storage
 
 # Asegurar permisos correctos para public/
 RUN find public -type f -exec chmod 644 {} \;
